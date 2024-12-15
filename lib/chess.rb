@@ -116,7 +116,7 @@ class Queen < Piece
   end
 
   def is_valid_move?(start, final, board)
-    true
+    return Rook.new(@color).is_valid_move?(start, final, board) || Bishop.new(@color).is_valid_move?(start, final, board)
   end
 end
 
@@ -136,22 +136,22 @@ class Rook < Piece
   def is_valid_move?(start, final, board)
     if (start.x == final.x || start.y == final.y) && (board[final.x][final.y] == "_" || board[final.x][final.y].color != @color)
       # puts board[final.x][final.y] == "_"
-      puts "Check valid move"
+      # puts "Check valid move"
       n = [start.x - final.x, start.y - final.y].max
       for i in 1..(n-1)
         dx = final.x > start.x ? i : -i
         dy = final.y > start.y ? i : -i
 
-        puts dx
-        puts dy
+        # puts dx
+        # puts dy
 
         if board[start.x + dx][start.y + dy] != '_'
-          puts false
+          # puts false
           return false
         end
       end
 
-      puts true
+      # puts true
       return true
     else
       return false
@@ -180,8 +180,8 @@ class Bishop < Piece
         dx = final.x > start.x ? i : -i
         dy = final.y > start.y ? i : -i
 
-        puts dx
-        puts dy
+        # puts dx
+        # puts dy
 
         if board[start.x + dx][start.y + dy] != '_'
           return false
