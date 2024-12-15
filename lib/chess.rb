@@ -4,46 +4,47 @@ class Board
   def initialize
     @board = Array.new(8) { Array.new(8, "_") }
     @checkmate = false
-    @black_pieces = []
-    @white_pieces = []
+    @black_pieces = Hash.new { |h, k| h[k] = [] }
+    @white_pieces = Hash.new { |h, k| h[k] = [] }
+    @player = "white"
 
     for i in 0..7
       @board[1][i] = Pawn.new("black", Coordinate.new(1, i))
       @board[6][i] = Pawn.new("white", Coordinate.new(6, i))
 
-      @black_pieces.push(@board[1][i])
-      @white_pieces.push(@board[6][i])
+      @black_pieces[:pawn].push(@board[1][i])
+      @white_pieces[:pawn].push(@board[6][i])
 
       if i == 0 || i == 7
         @board[0][i] = Rook.new("black", Coordinate.new(0, i))
         @board[7][i] = Rook.new("white", Coordinate.new(7, i))
 
-        @black_pieces.push(@board[0][i])
-        @white_pieces.push(@board[7][i])
+        @black_pieces[:rook].push(@board[0][i])
+        @white_pieces[:rook].push(@board[7][i])
       elsif i == 1 || i == 6
         @board[0][i] = Knight.new("black", Coordinate.new(0, i))
         @board[7][i] = Knight.new("white", Coordinate.new(7, i))
 
-        @black_pieces.push(@board[0][i])
-        @white_pieces.push(@board[7][i])
+        @black_pieces[:knight].push(@board[0][i])
+        @white_pieces[:knight].push(@board[7][i])
       elsif i == 2 || i == 5
         @board[0][i] = Bishop.new("black", Coordinate.new(0, i))
         @board[7][i] = Bishop.new("white", Coordinate.new(7, i))
 
-        @black_pieces.push(@board[0][i])
-        @white_pieces.push(@board[7][i])
+        @black_pieces[:bishop].push(@board[0][i])
+        @white_pieces[:bishop].push(@board[7][i])
       elsif i == 3
         @board[0][i] = Queen.new("black", Coordinate.new(0, i))
         @board[7][i] = Queen.new("white", Coordinate.new(7, i))
 
-        @black_pieces.push(@board[0][i])
-        @white_pieces.push(@board[7][i])
+        @black_pieces[:queen].push(@board[0][i])
+        @white_pieces[:queen].push(@board[7][i])
       elsif i == 4
         @board[0][i] = King.new("black", Coordinate.new(0, i))
         @board[7][i] = King.new("white", Coordinate.new(7, i))
 
-        @black_pieces.push(@board[0][i])
-        @white_pieces.push(@board[7][i])
+        @black_pieces[:king].push(@board[0][i])
+        @white_pieces[:king].push(@board[7][i])
       end
     end
 
@@ -74,16 +75,49 @@ class Board
   def update_board(move)
     # Do a primitive move "p/e2/e4"
     move = move.chars
-    piece = move[0]
-    start = Coordinate.new(8 - move[2].to_i, move[1].ord - 97)
-    final = Coordinate.new(8 - move[4].to_i, move[3].ord - 97)
-    if @board[start.x][start.y] != "_" && @board[start.x][start.y].is_valid_move?(start, final, @board)
-      @board[final.x][final.y] = @board[start.x][start.y]
-      @board[start.x][start.y] = '_'
-    else
-      puts "Invalid move"
-      gets
+    case move[0]
+    when "k"
+      candidates = @player == "white" ? white_pieces[:king] : black_pieces[:king]
+    when "q"
+      candidates = @player == "white" ? white_pieces[:queen] : black_pieces[:queen]
+    when "r"
+      candidates = @player == "white" ? white_pieces[:rook] : black_pieces[:rook]
+    when "b"
+      candidates = @player == "white" ? white_pieces[:bishop] : black_pieces[:bishop]
+    when "n"
+      candidates = @player == "white" ? white_pieces[:knight] : black_pieces[:knight]
+    when "p"
+      candidates = @player == "white" ? white_pieces[:pawn] : black_pieces[:pawn]
     end
+
+    candidates.each do |c|
+      start = c.pos
+      final = Coordinate.new(8 - move[2].to_i, move[1].ord - 97)
+
+      # p start
+      # p final
+
+      if @board[start.x][start.y] != "_" && @board[start.x][start.y].is_valid_move?(start, final, @board)
+        @board[final.x][final.y] = @board[start.x][start.y]
+        @board[start.x][start.y] = '_'
+        c.pos = final
+        # puts "board updated"
+      end
+      # puts "#{c.pos.x} #{c.pos.y} is not the right candidate "
+    end
+    # puts "wait..."
+    # gets
+    @player = @player == "white" ? "black" : "white"
+    # start = Coordinate.new(8 - move[2].to_i, move[1].ord - 97)
+    # final = Coordinate.new(8 - move[4].to_i, move[3].ord - 97)
+
+    # if @board[start.x][start.y] != "_" && @board[start.x][start.y].is_valid_move?(start, final, @board)
+    #   @board[final.x][final.y] = @board[start.x][start.y]
+    #   @board[start.x][start.y] = '_'
+    # else
+    #   puts "Invalid move"
+    #   gets
+    # end
   end
 
   def is_checkmate?
@@ -92,7 +126,7 @@ class Board
 end
 
 class Piece
-  attr_accessor :color
+  attr_accessor :color, :pos
   def initialize(color, pos)
     @color = color
     @pos = pos
@@ -288,7 +322,7 @@ class Pawn < Piece
         # puts val
         return val
       else
-        puts "Invalid move checker"
+        # puts "Invalid move checker"
         return false
       end
     elsif @color == "black"
@@ -353,6 +387,7 @@ board = Board.new
 # board.update_board("pe2e4")
 # board.display_board
 # p board.board[3][1]
+# puts board.white_pieces
 
 start = Coordinate.new(6, 0)
 final = Coordinate.new(6, 2)
@@ -368,5 +403,6 @@ final = Coordinate.new(6, 2)
 # bishop = Bishop.new("white")
 # bishop.is_valid_move?(start, final, board.board)
 
-# rook = Rook.new("white")
+# rook = Rook.new("white", start)
+# puts rook.pos.y
 # rook.is_valid_move?(start, final, board.board)
