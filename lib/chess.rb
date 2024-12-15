@@ -55,11 +55,11 @@ class Board
     # Do a primitive move "p/e2/e4"
     move = move.chars
     piece = move[0]
-    start = [8 - move[2].to_i, move[1].ord - 97]
-    final = [8 - move[4].to_i, move[3].ord - 97]
-    if @board[start[0]][start[1]] != "_" && @board[start[0]][start[1]].is_valid_move?(start, final, @board)
-      @board[final[0]][final[1]] = @board[start[0]][start[1]]
-      @board[start[0]][start[1]] = '_'
+    start = Coordinate.new(8 - move[2].to_i, move[1].ord - 97)
+    final = Coordinate.new(8 - move[4].to_i, move[3].ord - 97)
+    if @board[start.x][start.y] != "_" && @board[start.x][start.y].is_valid_move?(start, final, @board)
+      @board[final.x][final.y] = @board[start.x][start.y]
+      @board[start.x][start.y] = '_'
     end
   end
 
@@ -95,7 +95,7 @@ class King < Piece
   def is_valid_move?(start, final, board)
     # assuming final is within the board
     # ALSO ADD CHECKING CONDITION
-    return board[final[0]][final[1]].color != @color || ((final[0] - start[0]).abs == 1 && (final[1] - start[1]).abs == 1)
+    return board[final.x][final.y].color != @color || ((final.x - start.x).abs == 1 && (final.y - start.y).abs == 1)
   end
 end
 
@@ -167,7 +167,16 @@ class Knight < Piece
   end
 
   def is_valid_move?(start, final, board)
-    true
+    if ((final.y - start.y).abs == 2 && (final.x - start.x).abs == 1) || ((final.y - start.y).abs == 1 && (final.x - start.x).abs == 2)
+      # puts "Valid move check"
+      val = board[final.x][final.y] == "_" ||  board[final.x][final.y].color != @color
+      # puts board[final.x][final.y]
+      # puts val
+      return val
+    else
+      # puts "Invalid move check"
+      return false
+    end
   end
 end
 
@@ -187,26 +196,27 @@ class Pawn < Piece
 
   def is_valid_move?(start, final, board)
     if @color == "white"
-      if @first_move && (final[0] - start[0]) == -2 && start[1] == final[1]
+      if @first_move && (final.x - start.x) == -2 && start.y == final.y
+        @first_move = false
         no_piece = true
         for i in 0..1
-          # puts board[final[0] + i][final[1]]
-          no_piece = no_piece && (board[final[0] + i][final[1]] == "_")                
+          # puts board[final.x + i][final.y]
+          no_piece = no_piece && (board[final.x + i][final.y] == "_")                
         end 
         # puts "2-move checker"
         # puts no_piece
         return no_piece
-      elsif (final[0] - start[0]) == -1 && start[1] == final[1]
+      elsif (final.x - start.x) == -1 && start.y == final.y
         no_piece = true
         for i in 0..0
-          no_piece = no_piece && (board[final[0] + i][final[1]] == "_")                    
+          no_piece = no_piece && (board[final.x + i][final.y] == "_")                    
         end 
         # puts "1-move checker"
         # puts no_piece
         return no_piece
-      elsif (final[0] - start[0]) == -1 && (start[1] - final[1]).abs == 1
+      elsif (final.x - start.x) == -1 && (start.y - final.y).abs == 1
         # puts "capture checker"
-        val = board[final[0]][final[1]] != "_" && board[final[0]][final[1]].color = "black"
+        val = board[final.x][final.y] != "_" && board[final.x][final.y].color = "black"
         # puts val
         return val
       else
@@ -214,24 +224,32 @@ class Pawn < Piece
         return false
       end
     elsif @color == "black"
-      if @first_move && (final[0] - start[0]) == 2 && start[1] == final[1]
+      if @first_move && (final.x - start.x) == 2 && start.y == final.y
         no_piece = true
         for i in 0..1
-          no_piece = no_piece && (board[final[0] - i][final[1]] == "_")                    
+          no_piece = no_piece && (board[final.x - i][final.y] == "_")                    
         end 
         return no_piece
-      elsif (final[0] - start[0]) == 1 && start[1] == final[1]
+      elsif (final.x - start.x) == 1 && start.y == final.y
         no_piece = true
         for i in 0..0
-          no_piece = no_piece && (board[final[0] - i][final[1]] == "_")                    
+          no_piece = no_piece && (board[final.x - i][final.y] == "_")                    
         end 
         return no_piece
-      elsif (final[0] - start[0]) == 1 && (start[1] - final[1]).abs == 1
-        return board[final[0]][final[1]] != "_" && board[final[0]][final[1]].color = "white"
+      elsif (final.x - start.x) == 1 && (start.y - final.y).abs == 1
+        return board[final.x][final.y] != "_" && board[final.x][final.y].color = "white"
       else
         return false
       end
     end
+  end
+end
+
+class Coordinate
+  attr_accessor :x, :y
+  def initialize(x, y)
+    @x = x
+    @y = y
   end
 end
 
@@ -259,10 +277,10 @@ def play
   end
 end
 
-play
+# play
 
 # Testing
-# board = Board.new
+board = Board.new
 # board.display_board
 # board.update_board("pe2e4")
 # board.display_board
@@ -272,3 +290,6 @@ play
 
 # pawn = Pawn.new("white")
 # pawn.is_valid_move?([6, 0], [5, 0], board.board)
+
+# knight = Knight.new("white")
+# knight.is_valid_move?(Coordinate.new(7, 1), Coordinate.new(6, 3), board.board)
