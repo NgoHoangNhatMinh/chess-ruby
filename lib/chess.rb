@@ -1,29 +1,49 @@
 class Board
-  attr_accessor :checkmate, :board
+  attr_accessor :checkmate, :board, :black_pieces, :white_pieces
 
   def initialize
     @board = Array.new(8) { Array.new(8, "_") }
     @checkmate = false
+    @black_pieces = []
+    @white_pieces = []
 
     for i in 0..7
-      @board[1][i] = Pawn.new("black")
-      @board[6][i] = Pawn.new("white")
+      @board[1][i] = Pawn.new("black", Coordinate.new(1, i))
+      @board[6][i] = Pawn.new("white", Coordinate.new(6, i))
+
+      @black_pieces.push(@board[1][i])
+      @white_pieces.push(@board[6][i])
 
       if i == 0 || i == 7
-        @board[0][i] = Rook.new("black")
-        @board[7][i] = Rook.new("white")
+        @board[0][i] = Rook.new("black", Coordinate.new(0, i))
+        @board[7][i] = Rook.new("white", Coordinate.new(7, i))
+
+        @black_pieces.push(@board[0][i])
+        @white_pieces.push(@board[7][i])
       elsif i == 1 || i == 6
-        @board[0][i] = Knight.new("black")
-        @board[7][i] = Knight.new("white")
+        @board[0][i] = Knight.new("black", Coordinate.new(0, i))
+        @board[7][i] = Knight.new("white", Coordinate.new(7, i))
+
+        @black_pieces.push(@board[0][i])
+        @white_pieces.push(@board[7][i])
       elsif i == 2 || i == 5
-        @board[0][i] = Bishop.new("black")
-        @board[7][i] = Bishop.new("white")
+        @board[0][i] = Bishop.new("black", Coordinate.new(0, i))
+        @board[7][i] = Bishop.new("white", Coordinate.new(7, i))
+
+        @black_pieces.push(@board[0][i])
+        @white_pieces.push(@board[7][i])
       elsif i == 3
-        @board[0][i] = Queen.new("black")
-        @board[7][i] = Queen.new("white")
+        @board[0][i] = Queen.new("black", Coordinate.new(0, i))
+        @board[7][i] = Queen.new("white", Coordinate.new(7, i))
+
+        @black_pieces.push(@board[0][i])
+        @white_pieces.push(@board[7][i])
       elsif i == 4
-        @board[0][i] = King.new("black")
-        @board[7][i] = King.new("white")
+        @board[0][i] = King.new("black", Coordinate.new(0, i))
+        @board[7][i] = King.new("white", Coordinate.new(7, i))
+
+        @black_pieces.push(@board[0][i])
+        @white_pieces.push(@board[7][i])
       end
     end
 
@@ -66,25 +86,22 @@ class Board
     end
   end
 
-  def find_move(piece)
-    
-  end
-
   def is_checkmate?
-    false
+    
   end
 end
 
 class Piece
   attr_accessor :color
-  def initialize(color)
+  def initialize(color, pos)
     @color = color
+    @pos = pos
   end
 end
 
 class King < Piece
-  def initialize(color)
-    super(color)
+  def initialize(color, pos)
+    super(color, pos)
   end
 
   def symbol
@@ -100,11 +117,20 @@ class King < Piece
     # ALSO ADD CHECKING CONDITION
     return board[final.x][final.y].color != @color || ((final.x - start.x).abs == 1 && (final.y - start.y).abs == 1)
   end
+
+  # def is_check?(board)
+  #     opponent_pieces = @color == "white" ? board.black_pieces : board.white_pieces
+      
+  # end
+
+  # def is_checkmate?(board)
+    
+  # end
 end
 
 class Queen < Piece
-  def initialize(color)
-    super(color)
+  def initialize(color, pos)
+    super(color, pos)
   end
 
   def symbol
@@ -121,8 +147,8 @@ class Queen < Piece
 end
 
 class Rook < Piece
-  def initialize(color)
-    super(color)
+  def initialize(color, pos)
+    super(color, pos)
   end
 
   def symbol
@@ -160,8 +186,8 @@ class Rook < Piece
 end
 
 class Bishop < Piece
-  def initialize(color)
-    super(color)
+  def initialize(color, pos)
+    super(color, pos)
   end
 
   def symbol
@@ -196,8 +222,8 @@ class Bishop < Piece
 end
 
 class Knight < Piece
-  def initialize(color)
-    super(color)
+  def initialize(color, pos)
+    super(color, pos)
   end
 
   def symbol
@@ -223,8 +249,8 @@ class Knight < Piece
 end
 
 class Pawn < Piece
-  def initialize(color)
-    super(color)
+  def initialize(color, pos)
+    super(color, pos)
     @first_move = true
   end
 
