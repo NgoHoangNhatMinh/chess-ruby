@@ -73,6 +73,7 @@ class Board
 end
 
 class Piece
+  attr_accessor :color
   def initialize(color)
     @color = color
   end
@@ -92,7 +93,8 @@ class King < Piece
   end
 
   def is_valid_move?(start, final, board)
-    true
+    # assuming final is within the board
+    return board[final[0]][final[1]].color != @color || ((final[0] - start[0]).abs == 1 && (final[1] - start[1]).abs == 1)
   end
 end
 
@@ -171,6 +173,7 @@ end
 class Pawn < Piece
   def initialize(color)
     super(color)
+    @first_move = true
   end
 
   def symbol
