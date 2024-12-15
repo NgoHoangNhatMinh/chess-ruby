@@ -60,6 +60,9 @@ class Board
     if @board[start.x][start.y] != "_" && @board[start.x][start.y].is_valid_move?(start, final, @board)
       @board[final.x][final.y] = @board[start.x][start.y]
       @board[start.x][start.y] = '_'
+    else
+      puts "Invalid move"
+      gets
     end
   end
 
@@ -131,7 +134,28 @@ class Rook < Piece
   end
 
   def is_valid_move?(start, final, board)
-    true
+    if (start.x == final.x || start.y == final.y) && (board[final.x][final.y] == "_" || board[final.x][final.y].color != @color)
+      # puts board[final.x][final.y] == "_"
+      puts "Check valid move"
+      n = [start.x - final.x, start.y - final.y].max
+      for i in 1..(n-1)
+        dx = final.x > start.x ? i : -i
+        dy = final.y > start.y ? i : -i
+
+        puts dx
+        puts dy
+
+        if board[start.x + dx][start.y + dy] != '_'
+          puts false
+          return false
+        end
+      end
+
+      puts true
+      return true
+    else
+      return false
+    end
   end
 end
 
@@ -150,7 +174,6 @@ class Bishop < Piece
 
   def is_valid_move?(start, final, board)
     if (start.x - final.x).abs == (start.y - final.y).abs && (board[final.x][final.y] == "_" || board[final.x][final.y].color != @color)
-      puts "Valid move checker"
       
       n = (start.x - final.x).abs
       for i in 1..(n-1)
@@ -161,12 +184,10 @@ class Bishop < Piece
         puts dy
 
         if board[start.x + dx][start.y + dy] != '_'
-          puts false
           return false
         end
       end
 
-      puts true
       return true
     else
       return false
@@ -298,7 +319,7 @@ def play
   end
 end
 
-# play
+play
 
 # Testing
 board = Board.new
@@ -308,7 +329,7 @@ board = Board.new
 # p board.board[3][1]
 
 start = Coordinate.new(6, 0)
-final = Coordinate.new(0, 6)
+final = Coordinate.new(6, 2)
 
 # puts "\x2654".force_encoding("UTF-16")
 
@@ -318,5 +339,8 @@ final = Coordinate.new(0, 6)
 # knight = Knight.new("white")
 # knight.is_valid_move?(Coordinate.new(7, 1), Coordinate.new(6, 3), board.board)
 
-bishop = Bishop.new("white")
-bishop.is_valid_move?(start, final, board.board)
+# bishop = Bishop.new("white")
+# bishop.is_valid_move?(start, final, board.board)
+
+# rook = Rook.new("white")
+# rook.is_valid_move?(start, final, board.board)
