@@ -94,6 +94,7 @@ class King < Piece
 
   def is_valid_move?(start, final, board)
     # assuming final is within the board
+    # ALSO ADD CHECKING CONDITION
     return board[final[0]][final[1]].color != @color || ((final[0] - start[0]).abs == 1 && (final[1] - start[1]).abs == 1)
   end
 end
@@ -185,7 +186,52 @@ class Pawn < Piece
   end
 
   def is_valid_move?(start, final, board)
-    true
+    if @color == "white"
+      if @first_move && (final[0] - start[0]) == -2 && start[1] == final[1]
+        no_piece = true
+        for i in 0..1
+          # puts board[final[0] + i][final[1]]
+          no_piece = no_piece && (board[final[0] + i][final[1]] == "_")                
+        end 
+        # puts "2-move checker"
+        # puts no_piece
+        return no_piece
+      elsif (final[0] - start[0]) == -1 && start[1] == final[1]
+        no_piece = true
+        for i in 0..0
+          no_piece = no_piece && (board[final[0] + i][final[1]] == "_")                    
+        end 
+        # puts "1-move checker"
+        # puts no_piece
+        return no_piece
+      elsif (final[0] - start[0]) == -1 && (start[1] - final[1]).abs == 1
+        # puts "capture checker"
+        val = board[final[0]][final[1]] != "_" && board[final[0]][final[1]].color = "black"
+        # puts val
+        return val
+      else
+        puts "Invalid move checker"
+        return false
+      end
+    elsif @color == "black"
+      if @first_move && (final[0] - start[0]) == 2 && start[1] == final[1]
+        no_piece = true
+        for i in 0..1
+          no_piece = no_piece && (board[final[0] - i][final[1]] == "_")                    
+        end 
+        return no_piece
+      elsif (final[0] - start[0]) == 1 && start[1] == final[1]
+        no_piece = true
+        for i in 0..0
+          no_piece = no_piece && (board[final[0] - i][final[1]] == "_")                    
+        end 
+        return no_piece
+      elsif (final[0] - start[0]) == 1 && (start[1] - final[1]).abs == 1
+        return board[final[0]][final[1]] != "_" && board[final[0]][final[1]].color = "white"
+      else
+        return false
+      end
+    end
   end
 end
 
@@ -223,3 +269,6 @@ play
 # p board.board[3][1]
 
 # puts "\x2654".force_encoding("UTF-16")
+
+# pawn = Pawn.new("white")
+# pawn.is_valid_move?([6, 0], [5, 0], board.board)
