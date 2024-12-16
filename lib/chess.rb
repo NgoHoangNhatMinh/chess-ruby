@@ -47,16 +47,6 @@ class Board
         @white_pieces[:king].push(@board[7][i])
       end
     end
-
-    # @valid_moves = Hash.new
-    # @board.each_with_index do |row, i|
-    #   row.each_with_index do |col, j|
-    #     if col != '_'
-    #       valid_moves[col.representation.to_sym] = col.generate_moves(@board)
-    #     end
-    #   end
-    # end
-
   end
 
   def display_board
@@ -73,7 +63,6 @@ class Board
   end
 
   def update_board(move)
-    # Do a primitive move "p/e2/e4"
     valid = false
     if move.length == 2
       move = " " + move
@@ -103,11 +92,22 @@ class Board
       # p final
 
       if c.is_valid_move?(start, final, @board)
-        @board[final.x][final.y] = @board[start.x][start.y]
-        @board[start.x][start.y] = '_'
+        king = @player == "white" ? white_pieces[:king][0] : black_pieces[:king][0]
         c.pos = final
-        valid = true
-        puts "board updated"
+        temp = @board[final.x][final.y]
+        @board[final.x][final.y] = @board[start.x][start.y]
+        opponent_pieces = @player == "white" ? black_pieces : white_pieces
+        if king.is_check?(final, opponent_pieces, @board)
+          c.pos = start
+          @board[final.x][final.y] = temp
+          puts "Invalid move, king is in check"
+        else
+          @board[final.x][final.y] = @board[start.x][start.y]
+          @board[start.x][start.y] = '_'
+          # c.pos = final
+          valid = true
+          puts "board updated"
+        end
       end
       # puts "#{c.pos.x} #{c.pos.y} is not the right candidate "
     end
@@ -159,14 +159,12 @@ class King < Piece
   def is_valid_move?(start, final, board)
     # assuming final is within the board
     # ALSO ADD CHECKING CONDITION
-    if ((final.x - start.x).abs <= 1 && (final.y - start.y).abs <= 1)# && !is_check?(board)
-      return board [final.x][final.y] == '_' || board[final.x][final.y].color != @color
+    if ((final.x - start.x).abs <= 1 && (final.y - start.y).abs <= 1)
+      return board [final.x][final.y] == '_' || board[final.x][final.y].color != @color && !is_check?(board)
     end
   end
 
-  def self.is_check?(board)
-    puts "is_check got called"
-    opponent_hash = @color == "white" ? board.black_pieces : board.white_pieces
+  def is_check?(final, opponent_hash, board)
     opponent_pieces = []
     opponent_hash.each_pair do |key, value|
       opponent_pieces += opponent_hash[key]
@@ -174,9 +172,11 @@ class King < Piece
     
     check = false
     opponent_pieces.each do |p|
-      check = check || p.is_valid_move?(p.pos, @pos, board.board)
+      val = p.is_valid_move?(p.pos, @pos, board)
+      check = check || val
+      # puts "#{p.symbol} from #{p.pos.display_coordinate} to #{@pos.display_coordinate}. Check is #{val}"
     end
-    puts check
+    # puts check
     return check
   end
 
@@ -202,7 +202,7 @@ class Queen < Piece
   end
 
   def is_valid_move?(start, final, board)
-    return Rook.new(@color).is_valid_move?(start, final, board) || Bishop.new(@color).is_valid_move?(start, final, board)
+    return Rook.new(@color, @pos).is_valid_move?(start, final, board) || Bishop.new(@color, @pos).is_valid_move?(start, final, board)
   end
 end
 
@@ -346,8 +346,8 @@ class Pawn < Piece
         return no_piece
       elsif (final.x - start.x) == -1 && (start.y - final.y).abs == 1
         # puts "capture checker"
-        val = board[final.x][final.y] != "_" && board[final.x][final.y].color = "black"
-        # puts val
+        val = board[final.x][final.y] != "_" && board[final.x][final.y].color == "black"
+        # puts "This is #{val}"
         return val
       else
         # puts "Invalid move checker"
@@ -381,6 +381,10 @@ class Coordinate
     @x = x
     @y = y
   end
+
+  def display_coordinate
+    return "#{(@y + 97).chr}#{8 - @x}"
+  end
 end
 
 def play
@@ -411,19 +415,21 @@ play
 
 # Testing
 board = Board.new
-# board.display_board
-# board.update_board("pe2e4")
-# board.display_board
-# p board.board[3][1]
-# puts board.white_pieces
+board.update_board("e4")
+board.update_board("e5")
+board.update_board("ke2")
+board.update_board("ke7")
+board.update_board("ke3")
+board.update_board("ke6")
+board.update_board("kd4")
+board.update_board("kd5")
+board.display_board
 
-start = Coordinate.new(3, 4)
-final = Coordinate.new(7, 2)
+start = Coordinate.new(4, 4)
+final = Coordinate.new(3, 3)
 
-# puts "\x2654".force_encoding("UTF-16")
-
-# pawn = Pawn.new("white")
-# pawn.is_valid_move?([6, 0], [5, 0], board.board)
+pawn = Pawn.new("white", start)
+pawn.is_valid_move?(start, final, board.board)
 
 # knight = Knight.new("white")
 # knight.is_valid_move?(Coordinate.new(7, 1), Coordinate.new(6, 3), board.board)
