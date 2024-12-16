@@ -1,0 +1,264 @@
+--- !ruby/object:Board
+board:
+- - &9 !ruby/object:Rook
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 0
+      y: 0
+    first_move: true
+  - &11 !ruby/object:Knight
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 0
+      y: 1
+  - &13 !ruby/object:Bishop
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 0
+      y: 2
+  - &15 !ruby/object:Queen
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 0
+      y: 3
+  - &16 !ruby/object:King
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 0
+      y: 4
+    first_move: true
+  - &14 !ruby/object:Bishop
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 0
+      y: 5
+  - &12 !ruby/object:Knight
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 0
+      y: 6
+  - &10 !ruby/object:Rook
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 0
+      y: 7
+    first_move: true
+- - &1 !ruby/object:Pawn
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 1
+      y: 0
+    first_move: true
+  - &2 !ruby/object:Pawn
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 1
+      y: 1
+    first_move: true
+  - &3 !ruby/object:Pawn
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 1
+      y: 2
+    first_move: true
+  - &4 !ruby/object:Pawn
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 1
+      y: 3
+    first_move: true
+  - _
+  - &6 !ruby/object:Pawn
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 1
+      y: 5
+    first_move: true
+  - &7 !ruby/object:Pawn
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 1
+      y: 6
+    first_move: true
+  - &8 !ruby/object:Pawn
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 1
+      y: 7
+    first_move: true
+- - _
+  - _
+  - _
+  - _
+  - _
+  - _
+  - _
+  - _
+- - _
+  - _
+  - _
+  - _
+  - &5 !ruby/object:Pawn
+    color: black
+    pos: !ruby/object:Coordinate
+      x: 3
+      y: 4
+    first_move: false
+  - _
+  - _
+  - _
+- - _
+  - _
+  - _
+  - _
+  - &21 !ruby/object:Pawn
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 4
+      y: 4
+    first_move: false
+  - _
+  - _
+  - _
+- - _
+  - _
+  - _
+  - _
+  - _
+  - _
+  - _
+  - _
+- - &17 !ruby/object:Pawn
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 6
+      y: 0
+    first_move: true
+  - &18 !ruby/object:Pawn
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 6
+      y: 1
+    first_move: true
+  - &19 !ruby/object:Pawn
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 6
+      y: 2
+    first_move: true
+  - &20 !ruby/object:Pawn
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 6
+      y: 3
+    first_move: true
+  - _
+  - &22 !ruby/object:Pawn
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 6
+      y: 5
+    first_move: true
+  - &23 !ruby/object:Pawn
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 6
+      y: 6
+    first_move: true
+  - &24 !ruby/object:Pawn
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 6
+      y: 7
+    first_move: true
+- - &25 !ruby/object:Rook
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 7
+      y: 0
+    first_move: true
+  - &27 !ruby/object:Knight
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 7
+      y: 1
+  - &29 !ruby/object:Bishop
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 7
+      y: 2
+  - &31 !ruby/object:Queen
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 7
+      y: 3
+  - &32 !ruby/object:King
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 7
+      y: 4
+    first_move: true
+  - &30 !ruby/object:Bishop
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 7
+      y: 5
+  - &28 !ruby/object:Knight
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 7
+      y: 6
+  - &26 !ruby/object:Rook
+    color: white
+    pos: !ruby/object:Coordinate
+      x: 7
+      y: 7
+    first_move: true
+checkmate: false
+black_pieces:
+  :pawn:
+  - *1
+  - *2
+  - *3
+  - *4
+  - *5
+  - *6
+  - *7
+  - *8
+  :rook:
+  - *9
+  - *10
+  :knight:
+  - *11
+  - *12
+  :bishop:
+  - *13
+  - *14
+  :queen:
+  - *15
+  :king:
+  - *16
+white_pieces:
+  :pawn:
+  - *17
+  - *18
+  - *19
+  - *20
+  - *21
+  - *22
+  - *23
+  - *24
+  :rook:
+  - *25
+  - *26
+  :knight:
+  - *27
+  - *28
+  :bishop:
+  - *29
+  - *30
+  :queen:
+  - *31
+  :king:
+  - *32
+player: white

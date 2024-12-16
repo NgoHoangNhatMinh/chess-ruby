@@ -175,6 +175,7 @@ class Board
     else
       move = process_input(move)
       candidates = generate_candidates(@player, move[0])
+      good_candidates = []
   
       candidates.each do |c|
         start = c.pos
@@ -198,6 +199,7 @@ class Board
             if c == king || c == rooks[0] || c == rooks[1]
               c.first_move = false
             end
+            good_candidates.push(c)
 
             @board[final.x][final.y] = @board[start.x][start.y]
             @board[start.x][start.y] = '_'
@@ -208,8 +210,8 @@ class Board
     end
     
     if !valid
-      puts "This is not a valid move. Please enter another move: "
-      # gets
+      puts "This is not a valid move. Press y to continue playing or n to save game"
+      gets
     else
       @player = @player == "white" ? "black" : "white"
       # gets
