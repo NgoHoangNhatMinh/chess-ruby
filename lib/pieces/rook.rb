@@ -1,6 +1,7 @@
 require_relative 'piece.rb'
 
 class Rook < Piece
+  attr_accessor :first_move
   def initialize(color, pos)
     super(color, pos)
     @first_move = true
@@ -19,8 +20,9 @@ class Rook < Piece
       return false
     elsif (start.x == final.x || start.y == final.y) && (board[final.x][final.y] == "_" || board[final.x][final.y].color != @color)
       # puts board[final.x][final.y] == "_"
-      # puts "Check valid move"
-      n = [start.x - final.x, start.y - final.y].max
+      # puts "Check rook move"
+      n = [(start.x - final.x).abs, (start.y - final.y).abs].max
+      # puts n
       for i in 1..(n-1)
         # p start
         # p final
@@ -29,6 +31,8 @@ class Rook < Piece
 
         # puts dx
         # puts dy
+        
+        # puts "check #{start.x + dx} #{start.y + dy}"
 
         if board[start.x + dx][start.y + dy] != '_'
           # puts false

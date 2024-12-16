@@ -81,46 +81,138 @@ class Board
   end
 
   def update_board(move)
+    valid = false
+
     # Add castling
     if move == "0-0"
-    elsif move == "0-0-0"
-    end
-  
-    move = process_input(move)
-    valid = false
-    candidates = generate_candidates(@player, move[0])
-
-    candidates.each do |c|
-      start = c.pos
-      final = Coordinate.new(8 - move[2].to_i, move[1].ord - 97)
-
-      if c.is_valid_move?(start, final, @board)
-        # p c.pos.display_coordinate
-
-        king = @player == "white" ? white_pieces[:king][0] : black_pieces[:king][0]
-
-        c.pos = final
-        temp = @board[final.x][final.y]
-        @board[final.x][final.y] = @board[start.x][start.y]
-        opponent_pieces = @player == "white" ? black_pieces : white_pieces
-        if king.is_check?(final, opponent_pieces, @board)
-          c.pos = start
-          @board[final.x][final.y] = temp
-          print "King is in check. "
+      if player == "white"
+        king = @white_pieces[:king][0]
+        rook = @white_pieces[:rook][1]
+        opponent_hash = @black_pieces
+        if king.is_check?(Coordinate.new(7, 5), opponent_hash, @board) || king.is_check?(Coordinate.new(7, 6), opponent_hash, @board) || @board[7][5] != "_" || @board[7][6] != "_" || !rook.first_move || !king.first_move
+          valid = false
         else
-          @board[final.x][final.y] = @board[start.x][start.y]
-          @board[start.x][start.y] = '_'
           valid = true
+          @board[7][5] = rook
+          @board[7][6] = king
+          @board[7][4] = "_"
+          @board[7][7] = "_"
+
+          rook.pos = Coordinate.new(7, 5)
+          king.pos = Coordinate.new(7, 6)
+
+          rook.first_move = false
+          king.first_move = false
+
+          # p @board
+        end
+      else
+        king = @black_pieces[:king][0]
+        rook = @black_pieces[:rook][1]
+        opponent_hash = @white_pieces
+        if king.is_check?(Coordinate.new(0, 5), opponent_hash, @board) || king.is_check?(Coordinate.new(0, 6), opponent_hash, @board) || @board[0][5] != "_" || @board[0][6] != "_" || !rook.first_move || !king.first_move
+          valid = false
+        else
+          valid = true
+          @board[0][5] = rook
+          @board[0][6] = king
+          @board[0][4] = "_"
+          @board[0][7] = "_"
+
+          rook.pos = Coordinate.new(0, 5)
+          king.pos = Coordinate.new(0, 6)
+
+          rook.first_move = false
+          king.first_move = false
+
+          # p @board
+        end
+      end
+    elsif move == "0-0-0"
+      if player == "white"
+        king = @white_pieces[:king][0]
+        rook = @white_pieces[:rook][1]
+        opponent_hash = @black_pieces
+        if king.is_check?(Coordinate.new(7, 3), opponent_hash, @board) || king.is_check?(Coordinate.new(7, 2), opponent_hash, @board) || @board[7][3] != "_" || @board[7][2] != "_" || !rook.first_move || !king.first_move
+          valid = false
+        else
+          valid = true
+          @board[7][2] = rook
+          @board[7][3] = king
+          @board[7][4] = "_"
+          @board[7][0] = "_"
+
+          rook.pos = Coordinate.new(7, 2)
+          king.pos = Coordinate.new(7, 3)
+
+          rook.first_move = false
+          king.first_move = false
+
+          # p @board
+        end
+      else
+        king = @black_pieces[:king][0]
+        rook = @black_pieces[:rook][1]
+        opponent_hash = @white_pieces
+        if king.is_check?(Coordinate.new(0, 2), opponent_hash, @board) || king.is_check?(Coordinate.new(0, 3), opponent_hash, @board) || @board[0][2] != "_" || @board[0][3] != "_" || !rook.first_move || !king.first_move
+          valid = false
+        else
+          valid = true
+          @board[0][2] = rook
+          @board[0][3] = king
+          @board[0][4] = "_"
+          @board[0][0] = "_"
+
+          rook.pos = Coordinate.new(0, 2)
+          king.pos = Coordinate.new(0, 3)
+
+          rook.first_move = false
+          king.first_move = false
+
+          # p @board
+        end
+      end
+    else
+      move = process_input(move)
+      candidates = generate_candidates(@player, move[0])
+  
+      candidates.each do |c|
+        start = c.pos
+        final = Coordinate.new(8 - move[2].to_i, move[1].ord - 97)
+  
+        if c.is_valid_move?(start, final, @board)
+          # p c.pos.display_coordinate
+  
+          king = @player == "white" ? white_pieces[:king][0] : black_pieces[:king][0]
+          rooks = @player == "white" ? white_pieces[:rook] : black_pieces[:rook]
+
+          c.pos = final
+          temp = @board[final.x][final.y]
+          @board[final.x][final.y] = @board[start.x][start.y]
+          opponent_pieces = @player == "white" ? black_pieces : white_pieces
+          if king.is_check?(final, opponent_pieces, @board)
+            c.pos = start
+            @board[final.x][final.y] = temp
+            print "King is in check. "
+          else
+            if c == king || c == rooks[0] || c == rooks[1]
+              c.first_move = false
+            end
+
+            @board[final.x][final.y] = @board[start.x][start.y]
+            @board[start.x][start.y] = '_'
+            valid = true
+          end
         end
       end
     end
-
+    
     if !valid
       puts "This is not a valid move. Please enter another move: "
-      gets
+      # gets
     else
       @player = @player == "white" ? "black" : "white"
-      gets
+      # gets
       # puts "Board updated"
       # gets
     end
@@ -157,7 +249,6 @@ class Board
         puts pos.display_coordinate
         # puts king.is_check?(king.pos, opponent_pieces, @board)
         # puts !king.is_valid_move?(start_pos, pos, @board)
-        # Why the king.ischeck is showing check for all square when qxf7?
         checkmate = checkmate && (king.is_check?(king.pos, opponent_pieces, @board))
         # puts "checkmate is #{checkmate}"
         

@@ -1,6 +1,7 @@
 require_relative 'piece.rb'
 
 class King < Piece
+  attr_accessor :first_move
   def initialize(color, pos)
     super(color, pos)
     @first_move = true
@@ -43,7 +44,11 @@ class King < Piece
       # puts p.is_valid_move?(p.pos, @pos, board)
       check = check || val
       # puts "#{p.symbol} from #{p.pos.display_coordinate} to #{@pos.display_coordinate}. Check is #{val}"
-      # puts "Board is #{board}"
+      if val == true
+        board.each_with_index do |r, i|
+          # puts r[3]
+        end
+      end
     end
     # puts check
     # p check

@@ -16,6 +16,8 @@ class Queen < Piece
   end
 
   def is_valid_move?(start, final, board)
+    # p Rook.new(@color, @pos).is_valid_move?(start, final, board)
+    # p Bishop.new(@color, @pos).is_valid_move?(start, final, board)
     return Rook.new(@color, @pos).is_valid_move?(start, final, board) || Bishop.new(@color, @pos).is_valid_move?(start, final, board)
   end
 end
