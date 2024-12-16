@@ -95,6 +95,8 @@ class Board
       final = Coordinate.new(8 - move[2].to_i, move[1].ord - 97)
 
       if c.is_valid_move?(start, final, @board)
+        # p c.pos.display_coordinate
+
         king = @player == "white" ? white_pieces[:king][0] : black_pieces[:king][0]
 
         c.pos = final
@@ -118,6 +120,7 @@ class Board
       gets
     else
       @player = @player == "white" ? "black" : "white"
+      gets
       # puts "Board updated"
       # gets
     end
