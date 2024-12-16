@@ -11,6 +11,12 @@ require_relative 'lib/pieces/king.rb'
 
 require 'yaml'
 
+module YAML
+  class << self
+    alias_method :load, :unsafe_load
+  end
+end
+
 def save_game(game)
   puts "Enter file name: "
   name = gets.chomp
@@ -25,7 +31,7 @@ end
 def load_game(name)
   puts File.basename(Dir.getwd)
   filename = "game_data/#{name}.yaml"
-  puts filename
+  # puts YAML.load_file(filename)
   begin
     YAML.load_file(filename)
   rescue
@@ -54,8 +60,8 @@ def play
     puts "What game do you want to open?"
     name = gets.chomp
     board = load_game(name)
-    p board
-    gets
+    # p board
+    # gets
     if board.nil?
       puts "Creating new game..."
       board = Board.new
