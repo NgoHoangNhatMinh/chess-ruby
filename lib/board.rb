@@ -127,6 +127,8 @@ class Board
     king = @player == "white" ? white_pieces[:king][0] : black_pieces[:king][0]
     opponent_pieces = @player == "white" ? black_pieces : white_pieces
 
+    start_pos = king.pos
+
     if !king.is_check?(king.pos, opponent_pieces, @board)
       return false
     end
@@ -134,14 +136,32 @@ class Board
     checkmate = true
 
     for i in -1..1
-      next if king.pos.x + i < 0 || king.pos.x + i > 7
+      next if start_pos.x + i < 0 || start_pos.x + i > 7
       for j in -1..1
-        next if king.pos.y + j < 0 || king.pos.y + j > 7
-        pos = Coordinate.new(king.pos.x + i, king.pos.y + j)
+        next if start_pos.y + j < 0 || start_pos.y + j > 7
+        pos = Coordinate.new(start_pos.x + i, start_pos.y + j)
+
+        if !king.is_valid_move?(start_pos, pos, @board)
+          checkmate = checkmate && true
+          next
+        end
+
+        # temporary move king to square
+        king.pos = pos
+        temp = board[pos.x][pos.y]
+        board[pos.x][pos.y] = king
+        board[start_pos.x][start_pos.y] = "_"
         puts pos.display_coordinate
-        puts king.is_check?(pos, opponent_pieces, @board)
+        # puts king.is_check?(king.pos, opponent_pieces, @board)
+        # puts !king.is_valid_move?(start_pos, pos, @board)
         # Why the king.ischeck is showing check for all square when qxf7?
-        checkmate = checkmate && (king.is_check?(pos, opponent_pieces, @board) || !king.is_valid_move?(king.pos, pos, @board))
+        checkmate = checkmate && (king.is_check?(king.pos, opponent_pieces, @board))
+        # puts "checkmate is #{checkmate}"
+        
+        king.pos = start_pos
+        board[start_pos.x][start_pos.y] = king
+        board[pos.x][pos.y] = temp
+
       end
     end
     return checkmate

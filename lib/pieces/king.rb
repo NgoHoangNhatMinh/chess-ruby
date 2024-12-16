@@ -19,7 +19,10 @@ class King < Piece
     if start.x == final.x && start.y == final.y
       return false
     elsif ((final.x - start.x).abs <= 1 && (final.y - start.y).abs <= 1)
-      return board [final.x][final.y] == '_' || board[final.x][final.y].color != @color
+      val = board [final.x][final.y] == '_' || board[final.x][final.y].color != @color
+      return val
+    else
+      return false
     end
   end
 
@@ -32,6 +35,7 @@ class King < Piece
     check = false
     opponent_pieces.each do |p|
       val = p.is_valid_move?(p.pos, @pos, board)
+      # p val
       # p p
       # p board
       # p p.pos
@@ -42,6 +46,7 @@ class King < Piece
       # puts "Board is #{board}"
     end
     # puts check
+    # p check
     return check
   end
 end

@@ -30,20 +30,28 @@ end
 play
 
 # Testing
-# board = Board.new
-# board.update_board("a3")
-# board.update_board("a6")
-# board.update_board("qf3")
-# board.update_board("d5")
-# board.update_board("qf7")
-# board.update_board("kf7")
-# # board.update_board("kd4")
+board = Board.new
+board.update_board("e4")
+board.update_board("e5")
+board.update_board("qf3")
+board.update_board("nc6")
+board.update_board("bc4")
+board.update_board("b6")
+board.update_board("qf7")
 # # board.update_board("kd5")
-# board.display_board
+board.display_board
+
+white_bishop = board.white_pieces[:bishop][1]
+
+start = Coordinate.new(4, 2) 
+final = Coordinate.new(1, 5)
+
+
+p white_bishop
+puts white_bishop.is_valid_move?(start, final, board.board)
 
 # p board
 
-# final = Coordinate.new(1, 5)
 
 # black_king = board.black_pieces[:king][0]
 # black_king.pos = final
