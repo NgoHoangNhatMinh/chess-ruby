@@ -1,5 +1,5 @@
 class Board
-  attr_accessor :checkmate, :board, :black_pieces, :white_pieces
+  attr_accessor :checkmate, :board, :black_pieces, :white_pieces, :player
 
   def initialize
     @board = Array.new(8) { Array.new(8, "_") }
@@ -58,7 +58,14 @@ class Board
           print @board[i][j].symbol + ' '
         end
       end
+
       puts "\n"
+    end
+
+    king = @player == "white" ? white_pieces[:king][0] : black_pieces[:king][0]
+    opponent_pieces = @player == "white" ? black_pieces : white_pieces
+    if king.is_check?(king.pos, opponent_pieces, @board)
+      puts "#{@player} king is in check"
     end
   end
 
@@ -88,11 +95,9 @@ class Board
       start = c.pos
       final = Coordinate.new(8 - move[2].to_i, move[1].ord - 97)
 
-      # p start
-      # p final
-
       if c.is_valid_move?(start, final, @board)
         king = @player == "white" ? white_pieces[:king][0] : black_pieces[:king][0]
+
         c.pos = final
         temp = @board[final.x][final.y]
         @board[final.x][final.y] = @board[start.x][start.y]
@@ -106,28 +111,17 @@ class Board
           @board[start.x][start.y] = '_'
           # c.pos = final
           valid = true
-          puts "board updated"
         end
       end
-      # puts "#{c.pos.x} #{c.pos.y} is not the right candidate "
     end
-    # puts "wait..."
-    gets
     if !valid
       puts "Not a valid move"
       gets
+    else
+      @player = @player == "white" ? "black" : "white"
+      puts "Board updated"
+      gets
     end
-    @player = @player == "white" ? "black" : "white"
-    # start = Coordinate.new(8 - move[2].to_i, move[1].ord - 97)
-    # final = Coordinate.new(8 - move[4].to_i, move[3].ord - 97)
-
-    # if @board[start.x][start.y] != "_" && @board[start.x][start.y].is_valid_move?(start, final, @board)
-    #   @board[final.x][final.y] = @board[start.x][start.y]
-    #   @board[start.x][start.y] = '_'
-    # else
-    #   puts "Invalid move"
-    #   gets
-    # end
   end
 
   def is_checkmate?
@@ -158,9 +152,10 @@ class King < Piece
 
   def is_valid_move?(start, final, board)
     # assuming final is within the board
-    # ALSO ADD CHECKING CONDITION
-    if ((final.x - start.x).abs <= 1 && (final.y - start.y).abs <= 1)
-      return board [final.x][final.y] == '_' || board[final.x][final.y].color != @color && !is_check?(board)
+    if start.x == final.x && start.y == final.y
+      return false
+    elsif ((final.x - start.x).abs <= 1 && (final.y - start.y).abs <= 1)
+      return board [final.x][final.y] == '_' || board[final.x][final.y].color != @color
     end
   end
 
@@ -173,19 +168,18 @@ class King < Piece
     check = false
     opponent_pieces.each do |p|
       val = p.is_valid_move?(p.pos, @pos, board)
+      # p p
+      # p board
+      # p p.pos
+      # p @pos
+      # puts p.is_valid_move?(p.pos, @pos, board)
       check = check || val
       # puts "#{p.symbol} from #{p.pos.display_coordinate} to #{@pos.display_coordinate}. Check is #{val}"
+      # puts "Board is #{board}"
     end
     # puts check
     return check
   end
-
-      
-  # end
-
-  # def is_checkmate?(board)
-    
-  # end
 end
 
 class Queen < Piece
@@ -220,7 +214,9 @@ class Rook < Piece
   end
 
   def is_valid_move?(start, final, board)
-    if (start.x == final.x || start.y == final.y) && (board[final.x][final.y] == "_" || board[final.x][final.y].color != @color)
+    if start.x == final.x && start.y == final.y
+      return false
+    elsif (start.x == final.x || start.y == final.y) && (board[final.x][final.y] == "_" || board[final.x][final.y].color != @color)
       # puts board[final.x][final.y] == "_"
       # puts "Check valid move"
       n = [start.x - final.x, start.y - final.y].max
@@ -261,7 +257,9 @@ class Bishop < Piece
   end
 
   def is_valid_move?(start, final, board)
-    if (start.x - final.x).abs == (start.y - final.y).abs && (board[final.x][final.y] == "_" || board[final.x][final.y].color != @color)
+    if start.x == final.x && start.y == final.y
+      return false
+    elsif (start.x - final.x).abs == (start.y - final.y).abs && (board[final.x][final.y] == "_" || board[final.x][final.y].color != @color)
       
       n = (start.x - final.x).abs
       for i in 1..(n-1)
@@ -297,7 +295,9 @@ class Knight < Piece
   end
 
   def is_valid_move?(start, final, board)
-    if ((final.y - start.y).abs == 2 && (final.x - start.x).abs == 1) || ((final.y - start.y).abs == 1 && (final.x - start.x).abs == 2)
+    if start.x == final.x && start.y == final.y
+      return false
+    elsif ((final.y - start.y).abs == 2 && (final.x - start.x).abs == 1) || ((final.y - start.y).abs == 1 && (final.x - start.x).abs == 2)
       # puts "Valid move check"
       val = board[final.x][final.y] == "_" ||  board[final.x][final.y].color != @color
       # puts board[final.x][final.y]
@@ -325,7 +325,9 @@ class Pawn < Piece
   end
 
   def is_valid_move?(start, final, board)
-    if @color == "white"
+    if start.x == final.x && start.y == final.y
+      return false
+    elsif @color == "white"
       if @first_move && (final.x - start.x) == -2 && start.y == final.y
         @first_move = false
         no_piece = true
@@ -391,23 +393,20 @@ def play
   board = Board.new
 
   game_over = false
-  player = "white"
 
   while !game_over && !board.checkmate
     puts "\e[H\e[2J"
     board.display_board
 
-    puts "#{player} to play. Please enter your move: "
+    puts "#{board.player} to play. Please enter your move: "
     move = gets.chomp.downcase
 
     board.update_board(move)
 
     if board.is_checkmate?
-      puts "#{player} wins"
+      puts "#{board.player} wins"
       board.checkmate = true
     end
-
-    player = player == "white" ? "black" : "white"
   end
 end
 
@@ -417,29 +416,44 @@ play
 board = Board.new
 board.update_board("e4")
 board.update_board("e5")
-board.update_board("ke2")
-board.update_board("ke7")
-board.update_board("ke3")
-board.update_board("ke6")
-board.update_board("kd4")
-board.update_board("kd5")
+board.update_board("qf3")
+board.update_board("d5")
+board.update_board("qf7")
+board.update_board("kf7")
+# board.update_board("kd4")
+# board.update_board("kd5")
 board.display_board
 
-start = Coordinate.new(4, 4)
-final = Coordinate.new(3, 3)
+# p board
 
-pawn = Pawn.new("white", start)
-pawn.is_valid_move?(start, final, board.board)
+final = Coordinate.new(1, 5)
+
+black_king = board.black_pieces[:king][0]
+black_king.pos = final
+white_queen = board.white_pieces[:queen][0]
+# p white_queen
+
+p white_queen.pos
+p black_king.pos
+puts white_queen.is_valid_move?(white_queen.pos, black_king.pos, board.board)
+
+# start = Coordinate.new(7, 3)
+
+# pawn = Pawn.new("white", start)
+# pawn.is_valid_move?(start, final, board.board)
 
 # knight = Knight.new("white")
 # knight.is_valid_move?(Coordinate.new(7, 1), Coordinate.new(6, 3), board.board)
 
-# bishop = Bishop.new("white")
-# bishop.is_valid_move?(start, final, board.board)
+# bishop = Bishop.new("white", start)
+# puts bishop.is_valid_move?(start, final, board.board)
 
 # rook = Rook.new("white", start)
 # puts rook.pos.y
-# rook.is_valid_move?(start, final, board.board)
+# puts rook.is_valid_move?(start, final, board.board)
 
 # king = King.new("white", start)
 # puts king.is_check?(board)
+
+# queen = Queen.new("white", start)
+# puts queen.is_valid_move?(start, final, board.board)
