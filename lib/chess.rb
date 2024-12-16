@@ -62,34 +62,18 @@ class Board
       puts "\n"
     end
 
-    king = @player == "white" ? white_pieces[:king][0] : black_pieces[:king][0]
-    opponent_pieces = @player == "white" ? black_pieces : white_pieces
-    if king.is_check?(king.pos, opponent_pieces, @board)
-      puts "#{@player} king is in check"
-    end
+    notify_check(@player)
   end
 
   def update_board(move)
+    # Add castling
+    if move == "0-0"
+    elsif move == "0-0-0"
+    end
+  
+    move = process_input(move)
     valid = false
-    if move.length == 2
-      move = " " + move
-    end
-    move = move.chars
-
-    case move[0]
-    when "k"
-      candidates = @player == "white" ? white_pieces[:king] : black_pieces[:king]
-    when "q"
-      candidates = @player == "white" ? white_pieces[:queen] : black_pieces[:queen]
-    when "r"
-      candidates = @player == "white" ? white_pieces[:rook] : black_pieces[:rook]
-    when "b"
-      candidates = @player == "white" ? white_pieces[:bishop] : black_pieces[:bishop]
-    when "n"
-      candidates = @player == "white" ? white_pieces[:knight] : black_pieces[:knight]
-    when " "
-      candidates = @player == "white" ? white_pieces[:pawn] : black_pieces[:pawn]
-    end
+    candidates = generate_candidates(@player, move[0])
 
     candidates.each do |c|
       start = c.pos
@@ -105,27 +89,63 @@ class Board
         if king.is_check?(final, opponent_pieces, @board)
           c.pos = start
           @board[final.x][final.y] = temp
-          puts "Invalid move, king is in check"
+          prints "King is in check. "
         else
           @board[final.x][final.y] = @board[start.x][start.y]
           @board[start.x][start.y] = '_'
-          # c.pos = final
           valid = true
         end
       end
     end
+
     if !valid
       puts "Not a valid move"
       gets
     else
       @player = @player == "white" ? "black" : "white"
-      puts "Board updated"
-      gets
+      # puts "Board updated"
+      # gets
     end
   end
 
   def is_checkmate?
     
+  end
+
+  def generate_candidates(player, piece)
+    case piece
+    when "k"
+      candidates = player == "white" ? white_pieces[:king] : black_pieces[:king]
+    when "q"
+      candidates = player == "white" ? white_pieces[:queen] : black_pieces[:queen]
+    when "r"
+      candidates = player == "white" ? white_pieces[:rook] : black_pieces[:rook]
+    when "b"
+      candidates = player == "white" ? white_pieces[:bishop] : black_pieces[:bishop]
+    when "n"
+      candidates = player == "white" ? white_pieces[:knight] : black_pieces[:knight]
+    when " "
+      candidates = player == "white" ? white_pieces[:pawn] : black_pieces[:pawn]
+    end
+
+    return candidates
+  end
+
+  def notify_check(player)
+    king = @player == "white" ? white_pieces[:king][0] : black_pieces[:king][0]
+    opponent_pieces = @player == "white" ? black_pieces : white_pieces
+    if king.is_check?(king.pos, opponent_pieces, @board)
+      print "#{@player.capitalize} king is in check. "
+    end
+  end
+
+  def process_input(move)
+    move = move.delete("x")
+    if move.length == 2
+      move = " " + move
+    end
+    move = move.chars
+    return move
   end
 end
 
@@ -140,6 +160,7 @@ end
 class King < Piece
   def initialize(color, pos)
     super(color, pos)
+    @first_move = true
   end
 
   def symbol
@@ -203,6 +224,7 @@ end
 class Rook < Piece
   def initialize(color, pos)
     super(color, pos)
+    @first_move = true
   end
 
   def symbol
@@ -398,7 +420,7 @@ def play
     puts "\e[H\e[2J"
     board.display_board
 
-    puts "#{board.player} to play. Please enter your move: "
+    puts "#{board.player.capitalize} to play. Please enter your move: "
     move = gets.chomp.downcase
 
     board.update_board(move)
