@@ -8,4 +8,4 @@ To save the game at any point of the game, you can input "save" instead of the n
 
 At the beginning of the game, you will be prompted to inpput a saved game you want to continue. If an invalid name is given, a new game will be started.
 
-To be added: dissambiguation, en passant, and invalid input checker.
+To be added: dissambiguation, en passant, and invalid input checker, promotion.
