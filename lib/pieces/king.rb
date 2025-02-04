@@ -36,22 +36,12 @@ class King < Piece
     check = false
     opponent_pieces.each do |p|
       val = p.is_valid_move?(p.pos, @pos, board)
-      # p val
-      # p p
-      # p board
-      # p p.pos
-      # p @pos
-      # puts p.is_valid_move?(p.pos, @pos, board)
       check = check || val
-      # puts "#{p.symbol} from #{p.pos.display_coordinate} to #{@pos.display_coordinate}. Check is #{val}"
       if val == true
         board.each_with_index do |r, i|
-          # puts r[3]
         end
       end
     end
-    # puts check
-    # p check
     return check
   end
 end

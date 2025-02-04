@@ -19,28 +19,16 @@ class Rook < Piece
     if start.x == final.x && start.y == final.y
       return false
     elsif (start.x == final.x || start.y == final.y) && (board[final.x][final.y] == "_" || board[final.x][final.y].color != @color)
-      # puts board[final.x][final.y] == "_"
-      # puts "Check rook move"
       n = [(start.x - final.x).abs, (start.y - final.y).abs].max
-      # puts n
       for i in 1..(n-1)
-        # p start
-        # p final
         dx = final.x > start.x ? i : final.x < start.x ? -i : 0
         dy = final.y > start.y ? i : final.y < start.y ? -i : 0
 
-        # puts dx
-        # puts dy
-        
-        # puts "check #{start.x + dx} #{start.y + dy}"
-
         if board[start.x + dx][start.y + dy] != '_'
-          # puts false
           return false
         end
       end
 
-      # puts true
       return true
     else
       return false

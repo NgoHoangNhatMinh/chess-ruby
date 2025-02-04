@@ -103,8 +103,6 @@ class Board
 
           rook.first_move = false
           king.first_move = false
-
-          # p @board
         end
       else
         king = @black_pieces[:king][0]
@@ -124,8 +122,6 @@ class Board
 
           rook.first_move = false
           king.first_move = false
-
-          # p @board
         end
       end
     elsif move == "0-0-0"
@@ -147,8 +143,6 @@ class Board
 
           rook.first_move = false
           king.first_move = false
-
-          # p @board
         end
       else
         king = @black_pieces[:king][0]
@@ -168,8 +162,6 @@ class Board
 
           rook.first_move = false
           king.first_move = false
-
-          # p @board
         end
       end
     else
@@ -182,8 +174,6 @@ class Board
         final = Coordinate.new(8 - move[2].to_i, move[1].ord - 97)
   
         if c.is_valid_move?(start, final, @board)
-          # p c.pos.display_coordinate
-  
           king = @player == "white" ? white_pieces[:king][0] : black_pieces[:king][0]
           rooks = @player == "white" ? white_pieces[:rook] : black_pieces[:rook]
 
@@ -214,9 +204,6 @@ class Board
       gets
     else
       @player = @player == "white" ? "black" : "white"
-      # gets
-      # puts "Board updated"
-      # gets
     end
   end
 
@@ -249,10 +236,7 @@ class Board
         board[pos.x][pos.y] = king
         board[start_pos.x][start_pos.y] = "_"
         puts pos.display_coordinate
-        # puts king.is_check?(king.pos, opponent_pieces, @board)
-        # puts !king.is_valid_move?(start_pos, pos, @board)
         checkmate = checkmate && (king.is_check?(king.pos, opponent_pieces, @board))
-        # puts "checkmate is #{checkmate}"
         
         king.pos = start_pos
         board[start_pos.x][start_pos.y] = king

@@ -23,9 +23,6 @@ class Bishop < Piece
         dx = final.x > start.x ? i : -i
         dy = final.y > start.y ? i : -i
 
-        # puts dx
-        # puts dy
-
         if board[start.x + dx][start.y + dy] != '_'
           return false
         end
